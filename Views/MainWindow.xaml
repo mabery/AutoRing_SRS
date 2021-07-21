@@ -169,14 +169,9 @@
                     SelectedItem="{Binding SelectedStructureRingInner, NotifyOnSourceUpdated=True}"
                     Background="Black"
                     Foreground="White">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding StructureId}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
-                        <Setter Property="IsEnabled" Value="{Binding IsHighRes}"/>
+                        <Setter Property="IsEnabled" Value="{Binding CanModify}"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ListBoxItem">
@@ -203,6 +198,11 @@
                         </Setter>
                     </Style>
                 </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding StructureId}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
             </ListBox>
             <ListBox
                     x:Name="ringMiddleSelection"
@@ -215,14 +215,9 @@
                     SelectedItem="{Binding SelectedStructureRingMiddle, NotifyOnSourceUpdated=True}"
                     Background="Black"
                     Foreground="White">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding StructureId}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
-                        <Setter Property="IsEnabled" Value="{Binding IsHighRes}"/>
+                        <Setter Property="IsEnabled" Value="{Binding CanModify}"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ListBoxItem">
@@ -249,6 +244,11 @@
                         </Setter>
                     </Style>
                 </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding StructureId}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
             </ListBox>
             <ListBox
                     x:Name="ringOuterSelection"
@@ -261,14 +261,9 @@
                     SelectedItem="{Binding SelectedStructureRingOuter, NotifyOnSourceUpdated=True}"
                     Background="Black"
                     Foreground="White">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding StructureId}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="{x:Type ListBoxItem}">
-                        <Setter Property="IsEnabled" Value="{Binding IsHighRes}"/>
+                        <Setter Property="IsEnabled" Value="{Binding CanModify}"/>
                         <Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="ListBoxItem">
@@ -295,6 +290,11 @@
                         </Setter>
                     </Style>
                 </ListBox.ItemContainerStyle>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding StructureId}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
         <Button x:Name="m_okButton"  Content="OK" Width="100" Margin="15" Command="{Binding GetRingsCommand}">
@@ -302,6 +302,15 @@
                 <Style TargetType="{x:Type Button}">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding SelectedItem.CanModify, ElementName=structureSetSelection, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding SelectedItem.IsHighRes, ElementName=ringInnerSelection, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding SelectedItem.IsHighRes, ElementName=ringMiddleSelection, UpdateSourceTrigger=PropertyChanged}" Value="False">
+                            <Setter Property="IsEnabled" Value="False"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding SelectedItem.IsHighRes, ElementName=ringOuterSelection, UpdateSourceTrigger=PropertyChanged}" Value="False">
                             <Setter Property="IsEnabled" Value="False"/>
                         </DataTrigger>
                         <DataTrigger Binding="{Binding SelectedItem.StructureId.Length, ElementName=TVSelection, UpdateSourceTrigger=PropertyChanged}" Value="0">
