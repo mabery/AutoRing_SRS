@@ -1,5 +1,6 @@
-﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using System.Windows;
 using System.Windows.Input;
 
 namespace AutoRingSRS
@@ -76,9 +77,6 @@ namespace AutoRingSRS
         public ICommand StartCommand => new RelayCommand(Start);
         public ICommand GetStructuresCommand => new RelayCommand(GetStructures);
         public ICommand GetRingsCommand => new RelayCommand(CreateRings);
-        public ICommand NewRingInnerCommand => new RelayCommand(NewRingInner);
-        public ICommand NewRingMiddleCommand => new RelayCommand(NewRingMiddle);
-        public ICommand NewRingOuterCommand => new RelayCommand(NewRingOuter);
         private async void Start()
         {
             StructureSets = await _esapiService.GetStructureSetsAsync();
@@ -92,7 +90,7 @@ namespace AutoRingSRS
             StructuresRingOuter = await _esapiService.GetStructureIdsAsync(SelectedStructureSet.StructureSetId, "Ring_Outer");
         }
 
-        private void CreateRings()
+        private async void CreateRings()
         {
             string selectedStructureSetId = SelectedStructureSet?.StructureSetId;
             string ptvId = SelectedStructure?.StructureId;
@@ -101,86 +99,13 @@ namespace AutoRingSRS
             string ringMiddleId = SelectedStructureRingMiddle?.StructureId;
             string ringOuterId = SelectedStructureRingOuter?.StructureId;
 
-            if (ringInnerId == null)
-                ringInnerId = "Ring_Inner";
-            else
-            {
-                if (SelectedStructureRingInner.CanModify == false)
-                {
-                    ringInnerId = "Ring_Inner1";
-                }
-                else
-                {
-                    for (int i = 2; i < 5; i++)
-                    {
-                        var possibleStructureId = "Ring_Inner" + i.ToString();
-                        if (SelectedStructureRingInner.StructureId == possibleStructureId)
-                        {
-                            if (SelectedStructureRingInner.CanModify == false)
-                                continue;
-                            else
-                            {
-                                ringInnerId = possibleStructureId;
-                                break;
-                            }
-                        }
-                    }
-                }    
-                            
-            }
-            if (ringMiddleId == null)
-                ringMiddleId = "Ring_Middle";
-            else
-            {
-                if (SelectedStructureRingMiddle.CanModify == false)
-                {
-                    ringInnerId = "Ring_Middle1";
-                }
-                else
-                {
-                    for (int i = 2; i < 5; i++)
-                    {
-                        var possibleStructureId = "Ring_Middle" + i.ToString();
-                        if (SelectedStructureRingMiddle.StructureId == possibleStructureId)
-                        {
-                            if (SelectedStructureRingMiddle.CanModify == false)
-                                continue;
-                            else
-                            {
-                                ringInnerId = possibleStructureId;
-                                break;
-                            }
-                        }
-                    }
-                }
+            if (ringInnerId == "<Create new structure>")
+                ringInnerId = await _esapiService.GetEditableRingNameAsync(selectedStructureSetId, "Ring_Inner");                      
+            if (ringMiddleId == "<Create new structure>")
+                ringMiddleId = await _esapiService.GetEditableRingNameAsync(selectedStructureSetId, "Ring_Middle");
+            if (ringOuterId == "<Create new structure>")
+                ringOuterId = await _esapiService.GetEditableRingNameAsync(selectedStructureSetId, "Ring_Outer");
 
-            }
-            if (ringOuterId == null)
-                ringOuterId = "Ring_Outer";
-            else
-            {
-                if (SelectedStructureRingOuter.CanModify == false)
-                {
-                    ringInnerId = "RingOuter1";
-                }
-                else
-                {
-                    for (int i = 2; i < 5; i++)
-                    {
-                        var possibleStructureId = "Ring_Outer" + i.ToString();
-                        if (SelectedStructureRingOuter.StructureId == possibleStructureId)
-                        {
-                            if (SelectedStructureRingOuter.CanModify == false)
-                                continue;
-                            else
-                            {
-                                ringInnerId = possibleStructureId;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
             double innerMargin;
             double middleMargin;
             double outerMargin;
@@ -203,21 +128,6 @@ namespace AutoRingSRS
                 {
                     await _esapiService.AddRingAsync(selectedStructureSetId, ptvId, ringInnerId, ringMiddleId, ringOuterId, innerMargin * 10, middleMargin * 10, outerMargin * 10);
                 });
-
-        }
-
-        private void NewRingInner()
-        {
-            
-        }
-
-        private void NewRingMiddle()
-        {
-
-        }
-        private void NewRingOuter()
-        {
-
         }
     }
 }
