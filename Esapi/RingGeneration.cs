@@ -1,4 +1,5 @@
-﻿using System.Linq;
+using System.Linq;
+using System.Windows;
 using VMS.TPS.Common.Model.API;
 
 namespace AutoRingSRS
@@ -8,47 +9,29 @@ namespace AutoRingSRS
         public void CreateRingFromPTV(StructureSet structureSet, string ptvId, string ringInnerId, string ringMiddleId, string ringOuterId, double innerMargin, double middleMargin, double outerMargin)
         {
             structureSet.Patient.BeginModifications();
-            Structure ptv = structureSet.Structures.Where(structure => structure.Id == ptvId).FirstOrDefault();
+            Structure ptv = structureSet.Structures.Where(x => x.Id == ptvId).FirstOrDefault();
             Structure ringInner;
             Structure ringMiddle;
             Structure ringOuter;
-            try
-            {
+            if (structureSet.Structures.Any(x => x.Id == ringInnerId))
+                ringInner = structureSet.Structures.Where(x => x.Id == ringInnerId).FirstOrDefault();
+            else
                 ringInner = structureSet.AddStructure("CONTROL", ringInnerId);  //doesnt exist yet
-            }
-            catch
-            {               
-                ringInner = structureSet.Structures.FirstOrDefault(x => x.Id == ringInnerId);  //already exists 
-                ringInner.SegmentVolume = ringInner.Sub(structureSet.Structures.Single(x => x.Id == "BODY"));  //cleanup
-            }
-            try
-            {
+            if (structureSet.Structures.Any(x => x.Id == ringMiddleId))
+                ringMiddle = structureSet.Structures.Where(x => x.Id == ringMiddleId).FirstOrDefault();
+            else
                 ringMiddle = structureSet.AddStructure("CONTROL", ringMiddleId);  //doesnt exist yet
-            }
-            catch
-            {
-                ringMiddle = structureSet.Structures.FirstOrDefault(x => x.Id == ringMiddleId);  //already exists 
-                ringMiddle.SegmentVolume = ringMiddle.Sub(structureSet.Structures.Single(x => x.Id == "BODY"));  //cleanup
-            }
-            try
-            {
+            if (structureSet.Structures.Any(x => x.Id == ringOuterId))
+                ringOuter = structureSet.Structures.Where(x => x.Id == ringOuterId).FirstOrDefault();
+            else
                 ringOuter = structureSet.AddStructure("CONTROL", ringOuterId);  //doesnt exist yet
-            }
-            catch
+            if (Helpers.CheckStructure(ringInner) && Helpers.CheckStructure(ringMiddle) && Helpers.CheckStructure(ringOuter))
             {
-                ringOuter = structureSet.Structures.FirstOrDefault(x => x.Id == ringOuterId);  //already exists 
-                ringOuter.SegmentVolume = ringOuter.Sub(structureSet.Structures.Single(x => x.Id == "BODY"));  //cleanup
+                ringInner.ConvertToHighResolution();
+                ringMiddle.ConvertToHighResolution();
+                ringOuter.ConvertToHighResolution();
             }
-            //try
-            //{
-            //    ringInner.ConvertToHighResolution();
-            //    ringMiddle.ConvertToHighResolution();
-            //    ringOuter.ConvertToHighResolution();
-            //}
-            //catch  //cannot change resolution
-            //{
-            //    MessageBox.Show("Cannot change structure resolution");
-            //}
+
             ringInner.SegmentVolume = ptv.Margin(innerMargin);
             ringMiddle.SegmentVolume = ptv.Margin(middleMargin);
             ringOuter.SegmentVolume = ptv.Margin(outerMargin);
@@ -59,7 +42,6 @@ namespace AutoRingSRS
 
             ringMiddle.SegmentVolume = ringMiddle.Sub(ringInner);
             ringOuter.SegmentVolume = ringOuter.Sub(ringInner);
-
             ringOuter.SegmentVolume = ringOuter.Sub(ringMiddle);
 
             ringInner.SegmentVolume = ringInner.And(structureSet.Structures.Single(x => x.Id == "BODY"));  //clear outside of body
