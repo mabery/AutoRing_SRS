@@ -66,23 +66,18 @@ namespace AutoRingSRS
             StructureSet structureSet = patient.StructureSets.FirstOrDefault(x => x.Id == structureSetId);
             string possibleStructureId = String.Empty;
 
-            if (structureSet.Structures.Any(x => x.Id == ringId) == false) //Ring isnt present
+            if (structureSet.Structures.Any(x => x.Id == ringId) == false) //Any ring isnt present
             {
                 return structureSet.Structures.Where(x => x.Id == ringId).FirstOrDefault().Id;
             }
 
             for (int i = 1; i <= 5; i++)
             {
-                foreach (var structure in structureSet.Structures)
-                {
-                    if (structure.Id == ringId + i.ToString())  //possible already present
-                    {
-                        possibleStructureId = ringId + (i + 1).ToString();
-                        break;
-                    }
-                }
+                if (structureSet.Structures.Any(x => x.Id == ringId + i.ToString()) == false)  //possible not present
+                    return ringId + i.ToString();
+                else
+                    possibleStructureId = ringId + (i + 1).ToString();
             }
-            return possibleStructureId;
             throw new Exception("Too many uneditable rings in structure set.");
         }
 
