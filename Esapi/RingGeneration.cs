@@ -25,12 +25,10 @@ namespace AutoRingSRS
                 ringOuter = structureSet.Structures.Where(x => x.Id == ringOuterId).FirstOrDefault();
             else
                 ringOuter = structureSet.AddStructure("CONTROL", ringOuterId);  //doesnt exist yet
-            if (Helpers.CheckStructure(ringInner) && Helpers.CheckStructure(ringMiddle) && Helpers.CheckStructure(ringOuter))
-            {
-                ringInner.ConvertToHighResolution();
-                ringMiddle.ConvertToHighResolution();
-                ringOuter.ConvertToHighResolution();
-            }
+
+            ringInner.ConvertToHighResolution();
+            ringMiddle.ConvertToHighResolution();
+            ringOuter.ConvertToHighResolution();
 
             ringInner.SegmentVolume = ptv.Margin(innerMargin);
             ringMiddle.SegmentVolume = ptv.Margin(middleMargin);
