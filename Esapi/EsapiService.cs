@@ -68,7 +68,7 @@ namespace AutoRingSRS
 
             if (structureSet.Structures.Any(x => x.Id == ringId) == false) //Any ring isnt present
             {
-                return structureSet.Structures.Where(x => x.Id == ringId).FirstOrDefault().Id;
+                return ringId;
             }
 
             for (int i = 1; i <= 5; i++)
