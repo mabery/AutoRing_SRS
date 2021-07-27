@@ -64,7 +64,6 @@ namespace AutoRingSRS
         public string GetEditableRingName(Patient patient, string structureSetId, string ringId)
         {
             StructureSet structureSet = patient.StructureSets.FirstOrDefault(x => x.Id == structureSetId);
-            string possibleStructureId = String.Empty;
 
             if (structureSet.Structures.Any(x => x.Id == ringId) == false) //Any ring isnt present
             {
@@ -75,8 +74,6 @@ namespace AutoRingSRS
             {
                 if (structureSet.Structures.Any(x => x.Id == ringId + i.ToString()) == false)  //possible not present
                     return ringId + i.ToString();
-                else
-                    possibleStructureId = ringId + (i + 1).ToString();
             }
             throw new Exception("Too many uneditable rings in structure set.");
         }
