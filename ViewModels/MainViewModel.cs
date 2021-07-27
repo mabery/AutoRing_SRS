@@ -110,7 +110,7 @@ namespace AutoRingSRS
             double middleMargin;
             double outerMargin;
 
-            if (ptvVolume < 0.5)  //very small
+            if (ptvVolume <= 0.5)  //very small
             {
                 innerMargin = 0.2;
                 middleMargin = 0.5;
